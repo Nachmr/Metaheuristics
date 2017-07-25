@@ -1,0 +1,11 @@
+En la carpeta BIN se encuentra el ejecutable de la práctica 2.
+
+La foma de ejecutar la práctica es la siguiente:
+
+1. hacer make en el directorio FUENTES
+
+2. ./qap <Metaheuristica> <archivo de entrada> <semilla>
+            "1) Greedy
+            "2) BMB
+            "3) GRASP
+            "4) ILS

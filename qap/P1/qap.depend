@@ -1,0 +1,63 @@
+# depslib dependency file v1.0
+1428439104 source:d:\ignacio\copy\informatica\carrera\3º\2º cuatrimestre\mh\practicas\qap\main.cpp
+	<iostream>
+	<fstream>
+	<sstream>
+	<string>
+	<stdlib.h>
+	<ctime>
+	<climits>
+	<vector>
+	<algorithm>
+	<math.h>
+	"random_ppio.h"
+	"timer.h"
+
+1067182498 d:\ignacio\copy\informatica\carrera\3º\2º cuatrimestre\mh\practicas\qap\random_ppio.h
+
+1087081688 d:\ignacio\copy\informatica\carrera\3º\2º cuatrimestre\mh\practicas\qap\timer.h
+
+1067182500 source:d:\ignacio\copy\informatica\carrera\3º\2º cuatrimestre\mh\practicas\qap\random_ppio.cpp
+	<math.h>
+	"random_ppio.h"
+
+1067182498 d:\ignacio\copy\informatica\carrera\3º\2º cuatrimestre\mh\practicas\qap\lib\random_ppio.h
+
+1087081688 d:\ignacio\copy\informatica\carrera\3º\2º cuatrimestre\mh\practicas\qap\lib\timer.h
+
+1067182500 source:d:\ignacio\copy\informatica\carrera\3º\2º cuatrimestre\mh\practicas\qap\lib\random_ppio.cpp
+	<math.h>
+	"random_ppio.h"
+
+1428424918 source:d:\ignacio\copy\informatica\carrera\3º\2º cuatrimestre\mh\practicas\qap\lib\timer.cpp
+	<stdio.h>
+	<time.h>
+	"timer.h"
+
+1428439104 source:d:\ignacio\copy\informatica\carrera\3º\2º cuatrimestre\mh\practicas\qap\fuentes\main.cpp
+	<iostream>
+	<fstream>
+	<sstream>
+	<string>
+	<stdlib.h>
+	<ctime>
+	<climits>
+	<vector>
+	<algorithm>
+	<math.h>
+	"random_ppio.h"
+	"timer.h"
+
+1067182500 source:d:\ignacio\copy\informatica\carrera\3º\2º cuatrimestre\mh\practicas\qap\p1\lib\random_ppio.cpp
+	<math.h>
+	"random_ppio.h"
+
+1067182498 d:\ignacio\copy\informatica\carrera\3º\2º cuatrimestre\mh\practicas\qap\p1\lib\random_ppio.h
+
+1428424918 source:d:\ignacio\copy\informatica\carrera\3º\2º cuatrimestre\mh\practicas\qap\p1\lib\timer.cpp
+	<stdio.h>
+	<time.h>
+	"timer.h"
+
+1087081688 d:\ignacio\copy\informatica\carrera\3º\2º cuatrimestre\mh\practicas\qap\p1\lib\timer.h
+

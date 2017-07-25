@@ -1,0 +1,11 @@
+En la carpeta debug se encuentra el ejecutable de la práctica 1. Esta ha sido desarrollada en codeblocks, por lo que no creo que haga falta makefile, simplmenete abrir el .cbp con codeblocks y ejecutar. De todas maneras, en la carpeta Fuentes he incluido un makefile por si fuera necesario.
+
+El archivo main.cpp he decidido finalmente dejarlo en el directorio raiz para que no haya problemas en cuanto a su localización por parte de Codeblocks.
+
+La foma de ejecutar la práctica es la siguiente:
+
+./qap <Metaheuristica> <archivo de entrada> <semilla>
+            "1) Greedy
+            "2) Busqueda Local
+            "3) Enfriamiento Simulado
+            "4) Tabú\n

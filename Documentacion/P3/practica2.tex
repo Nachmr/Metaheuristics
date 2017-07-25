@@ -1,0 +1,405 @@
+\input{preambuloSimple.tex}
+
+%----------------------------------------------------------------------------------------
+%	TÍTULO Y DATOS DEL ALUMNO
+%----------------------------------------------------------------------------------------
+
+\title{	
+\normalfont \normalsize 
+\textsc{{\bf Metaheurísticas (2014-2015)} \\ Grado en Ingeniería Informática \\ Universidad de Granada} \\ [25pt] % Your university, school and/or department name(s)
+\horrule{0.5pt} \\[0.4cm] % Thin top horizontal rule
+\huge  Práctica 2 - Búsquedas por trayectorias múltiples \\ % The assignment title
+\horrule{2pt} \\[0.5cm] % Thick bottom horizontal rule
+}
+
+\author{Ignacio Martín Requena} % Nombre y apellidos
+
+\date{\normalsize\today} % Incluye la fecha actual
+
+%----------------------------------------------------------------------------------------
+% DOCUMENTO
+%----------------------------------------------------------------------------------------
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{color}
+\definecolor{gray97}{gray}{.97}
+\definecolor{gray75}{gray}{.75}
+\definecolor{gray45}{gray}{.45}
+ 
+
+\lstset{ frame=Ltb,
+     framerule=0pt,
+     aboveskip=0.5cm,
+     framextopmargin=3pt,
+     framexbottommargin=3pt,
+     framexleftmargin=0.4cm,
+     framesep=0pt,
+     rulesep=.4pt,
+     backgroundcolor=\color{gray97},
+     rulesepcolor=\color{black},
+     %
+     stringstyle=\ttfamily,
+     showstringspaces = false,
+     basicstyle=\small\ttfamily,
+     commentstyle=\color{gray45},
+     keywordstyle=\bfseries,
+     %
+     numbers=left,
+     numbersep=15pt,
+     numberstyle=\tiny,
+     numberfirstline = false,
+     breaklines=true,
+   }
+ 
+
+
+\lstdefinestyle{consola}
+   {basicstyle=\scriptsize\bf\ttfamily,
+    backgroundcolor=\color{gray75},
+   }
+ 
+\lstdefinestyle{C}
+   {language=C,
+   }
+
+
+
+\begin{document}
+
+\maketitle % Muestra el Título
+
+\newpage %inserta un salto de página
+
+\tableofcontents % para generar el índice de contenidos
+
+\listoffigures
+
+%\listoftables
+
+\newpage
+
+
+
+
+%----------------------------------------------------------------------------------------
+%	Cuestion 1
+%----------------------------------------------------------------------------------------
+\section{Descripción del problema}
+El problema de la asignación cuadrática (QAP) es un problema clásico en teoría de localización. En éste se trata de asignar N unidades a una cantidad N de sitios o localizaciones en donde se considera un costo asociado a cada una de las asignaciones. Este costo dependerá de las distancias y flujo entre unidades, además de un costo adicional por asignar cierta unidad a una localización específica. De este modo se buscará que este costo, en función de la distancia y flujo, sea mínimo.
+
+Este problema tiene muchas aplicaciones, como el diseño de hospitales donde se pretende que los médicos recorran la menor distancia posible dependiendo de su especialidad, procesos de comunicaciones, diseño de teclados de un ordenador, diseño de circuitos eléctricos, diseño de terminarles en aeropuertos y, en general, todo aquel problema de optimización de trayectorias y localizaciones que posea un espacio de búsqueda considerablemente grande. 
+
+%----------------------------------------------------------------------------------------
+%	Cuestion 2
+%----------------------------------------------------------------------------------------
+\section{Descripción de los algoritmos empleados}
+
+En esta sección vamos a especificar las componentes comunes a todos los algoritmos empleados para la resolución del problema:
+
+\begin{itemize}
+	\item \textbf{Representación de la solución: }
+	
+	La forma más conveniente considerada para representar las soluciones es a través de las permutaciones de un conjunto. Esto quiere decir que si por ejemplo el problema tiene, por ejemplo, tamaño cuatro, una posible solución al problema sería N = \{1,4,2,3\}. De esta forma, si interpretamos los índices de este conjunto como las unidades, y el valor del índice como su localización, la localización 3 estaría asignada a la unidad 1, la 4 a la 2 y así sucesivamente.
+	
+	\item \textbf{Función objetivo:}
+	
+	Dado que el objetivo del problema es la minimización del costo total de todas las posibles soluciones, la función objetivo vendrá definida matemáticamente como:
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=1.0]{Screenshot_2.png}
+		\caption{Función objetivo}
+		\label{}
+	\end{figure}
+	\newpage
+	En forma de pseudicódigo nuestra función objetivo sería:
+	
+	\begin{lstlisting}[language=SH]
+inicializamos el costo a 0
+para cada fila de las matrices de distancia y flujo
+	para cada posicion de las matrices de distancia y flujo
+		costo += flujo[i][j] * distancia[[i]][sol[j]];
+
+	\end{lstlisting}
+	
+	\item \textbf{Función factorizar:}
+	
+	Con el fin de aumentar la eficiencia y el tiempo de ejecución de nuestros algoritmos se implementa la función factorizar, que nos calcula la diferencia de costo entre una solución y otra, de esta forma evitamos el tener que calcular el costo de una solución de principio a fin.
+	
+	En forma de pseudicódigo nuestra función factorizar sería:
+	
+	\begin{lstlisting}[language=SH]
+	
+    inicializamos una variable suma a 0
+    
+    desde i=0 hasta N hacer
+	    si i no coincide con ninguna de las localizaciones a inercambiar
+		    realizar el coste del movimiento de intercambio como la sumatoria de la diferencia de todas las distancias nuevas menos las viejas multiplicadas por el flujo
+	
+	\end{lstlisting}
+	\newpage
+	\item \textbf{Función generar vecino:}	
+	Esta función calcula una solución vecina a partir de una solución actual y dos posiciones a intercambiar.
+	
+	En forma de pseudicódigo nuestra función "swap" sería:
+	
+	\begin{lstlisting}[language=SH]
+
+Crear un vector para guardar la nueva solucion
+Para cada elemento de la solucion actual
+	Copiar en el nuevo vector solucion
+Guardar en una variable el valor de la posicion a intercambiar
+Cambiar dicho valor por el contenido en la otra posicion
+Asignar a la otra posicion el valor guardado en el paso 5 
+Actualizar el costo de la solucion como el costo de la solucion inicial mas el factorizado
+Devolver la nueva solucion
+
+	\end{lstlisting}
+	
+		\item \textbf{Función generar solución aleatoria:}	
+		Esta función calcula una solución inicial generada aleatoriamente.
+		
+		En forma de pseudicódigo nuestra función "getSolAleatoria" sería:
+		
+		\begin{lstlisting}[language=SH]
+		
+Creamos un vector de enteros con el tamano de las matrices de flujo o distancia
+Para cada posicion del vector creado
+	Generamos un numero aleatorio compremndido entre la posicion actual y el tamano del vector
+	Introducimos este numero en el vector de soluciones iniciales
+Calculamos el costo de la solucion inicial
+Devolvemos la solucion y su costo
+		\end{lstlisting}
+\newpage
+			\item \textbf{Función BL:}
+		Este algoritmo se compone de dos partes: La creación de la máscara Don't Look Bite y el propio algoritmo de búsqueda
+
+			Una representación en pseudicódigo de esta función sería:
+			
+					\begin{lstlisting}[language=SH]
+					
+Inicializamos DLB a 0, y con un tamao igual que el del problema
+Creamos una variable para saber cuando parar de iterar
+Mientras se pueda seguir iterando
+	Para i=1...n
+		si DLB[i] == 0
+			Para j=1...n
+				si costo factorizado actual menor que 0
+					intercambiamos localizaciones de solucion actual
+					dlb[i] = dlb[j] = 0;
+					paramos de iterar
+			si podemos seguir iterando
+				dlb[i] = 1;
+Devolver estado actual
+					\end{lstlisting}
+
+		
+\end{itemize} 
+
+
+%----------------------------------------------------------------------------------------
+%	Cuestion 3
+%----------------------------------------------------------------------------------------
+\section{Descripción del esquema de búsqueda y las operaciones de cada algoritmo}	
+		
+		\subsubsection{Búsqueda Multiarranque Básica}
+		
+		El algoritmo principal para la búsqueda multiarranque básica con el que se ha elavorado la práctica ha sido:
+		
+	\begin{lstlisting}[language=SH]
+					
+Creamos un vector de soluciones de tam 25
+Asignamos a cada componente una solucion aleatoria
+Aplicamos Busqueda local a cada componente
+Seleccionamos la mejor solucion del vector de tam 25
+Devolvemos la mejor solucion
+
+	\end{lstlisting}
+	
+	Aunque su implementación es muy sencilla una vez disponemos del algoritmo de Busqueda Local, el que sea multiarranque proporciona diversidad al explorar soluciones desde muchos caminos diferentes. Los resultados de este algoritmo pese a su simpleza son muy buenos.
+		\newpage
+		\subsubsection{GRASP}
+		Esta metaheurística consta de dos partes principales:
+		
+		\begin{itemize}
+		
+			\item \textbf{Función getGreedyAleatorio}
+		
+			\begin{lstlisting}[language=SH]
+					
+	Creamos solucion no inicializada
+	
+	Generamos un numero aleatorio entre 0 y el tama del problema
+	Creamos dos vectores para gestionar los cambios en la solucion, orden y orden_dist
+	Orden dist lo inicializamos con sus componentes ordenadas por distancia
+	para i=0 hasta tam
+		Sumamos los las matrices de flujo a partir del numero aleatorio y lo guardamos en el vector orden
+		Guardamos el numero de iteracion y se lo asociamos al valor obtenido de la suma de las matrices
+	Ordenamos de menor a mayor el vector orden
+	
+	
+	solucion[iteracion guardada] = orden_dist
+	
+	setCosto(solucion)
+	return solucion
+
+	\end{lstlisting}
+		
+			\item \textbf{Algoritmo GRASP}
+		
+			\begin{lstlisting}[language=SH]
+					
+Creamos dos estados solucion, uno para la actual y otro para la mejor
+Asignamos un valor muy alto al costo de la mejor solucion
+Mientras i!=25
+		actual = getGreedyAleatorio();
+		actual = busquedaLocal(actual);
+		si actual mejor que la mejoe encontrada
+			mejor = actual
+			i = -1
+		i++
+Devolver mejor
+
+	\end{lstlisting}
+		
+		\end{itemize}
+		
+			\newpage	
+		\subsubsection{ISL}
+		
+		\begin{itemize}
+		
+			\item \textbf{Función mutar}
+			
+			\begin{lstlisting}[language=SH]
+					
+	solucion_mutar = solucion pasada como parametro a la funcion
+	int t = tam/4
+	int pos = aleatorio entre 0 y tam-1-tam/4
+	
+	para i=0... tam
+		int auxiliar;
+		int numero aleatorio 1 = aleatorio entre pos y pos+t
+		int numero aleatorio 2 = aleatorio entre pos y pos+t
+		Mientras aleatorio 1 = aleatorio 2
+			aleatorio 1 = aleatorio entre pos y pos+t
+		
+		aux = solucion mutar[aleatorio1]
+		solucion_mutar[aleatorio1] = solucion_mutar[aleatorio2]
+		solucion_mutar[aleatorio2] = aux;
+		
+
+	setCosto solucion_mutar
+	Devolver solucion_mutar
+
+	\end{lstlisting}
+		
+			\item \textbf{Algoritmo ILS}
+			
+	\begin{lstlisting}[language=SH]
+					
+	Solucion actual = generar aleatoria
+	Mejor solucion = solucion actual
+
+	BusquedaLocal(actual)
+
+	Para i=0 hasta tam
+		
+		actual = mutarcion()
+		actual = busquedaLocal()
+		
+		si costo actual < costo mejor
+			mejor = actual
+
+	return mejor
+
+	\end{lstlisting}
+		
+		\end{itemize}
+		
+%----------------------------------------------------------------------------------------
+%	Cuestion 4
+%----------------------------------------------------------------------------------------
+\newpage
+\section{Algoritmo de comparación: Greedy}
+Este algoritmo no hace mas que calcular los potenciales de cada unidad y de cada localización, los ordena y asigna el de mayor flujo al de menor distancia.
+
+En pseudocódigo sería algo como:
+
+\begin{lstlisting}[language=SH]
+Declaramos un estado solucion
+Ordenamos por flujo la matriz de flujo y por distancia la de distancia
+Para i=0..n
+	Asignamos al elemento determinado por flujo del estado solucion el elemento distancia (podemos hacerlo asi ya que hemos ordenado los vectores previamente.)
+Asignamos el costo de la solucion
+Devolvemos el estado
+
+\end{lstlisting}
+
+%----------------------------------------------------------------------------------------
+%	Cuestion 5
+%----------------------------------------------------------------------------------------
+\section{Procedimiento considerado para desarrollar la práctica}
+Para la realización de esta práctica me he basado en una implementación que he encontrado por internet\footnote{\url{http://quadratic-assignation.googlecode.com/svn-history/r44/trunk/qap.cpp}} dado que me ha resultado facil de entender y elegante, sobre todo por la utilización del struc de Estados. Aun así la modificación a este codigo ha sido casi entera y solo se han usado las estructuras y la lectura de los ficheros que el enlace proporciona. Me ha resultado de gran ayuda ya que tenía algunos operadores de copia implementados. El resto de ayudas han venido sobre todo de mano de los apuntes de clase, del guion de prácticas o de charlas con compañeros de clase.
+
+%----------------------------------------------------------------------------------------
+%	Cuestion 6
+%----------------------------------------------------------------------------------------
+\section{Experimentos y análisis de los resultados}
+
+Los problemas que he empelado han sido los mismos que los que vienen en la plantilla que se nos proporciona. Para cada caso, los parámetros para su ejecución son:
+
+./qap <Metaheuristica> <archivo de entrada> <semilla>\\
+
+donde metaheurística indica la metaheurística a usar:\\
+1) Greedy\\
+2) BMB\\
+3) GRASP\\
+4) ILS\\
+
+La semilla usada ha sido la \textbf{4312365} 
+
+A continuación se muestran las tablas con los resultados obtenidos:
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=.60]{greedy.png}
+\caption{Resultados algoritmo Greedy}
+\label{}
+\end{figure}
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=.60]{bmb.png}
+\caption{Resultados algoritmo BMB}
+\label{}
+\end{figure}
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=.60]{grasp.png}
+\caption{Resultados algoritmo GRASP}
+\label{}
+\end{figure}
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=.60]{isl.png}
+\caption{Resultados algoritmo ILS}
+\label{}
+\end{figure}
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=.60]{total.png}
+\caption{Comparación de algoritmos}
+\label{}
+\end{figure}
+
+Como podemos ver, el algoritmo que mejor funciona es el ILS, dado que ofrece un poco mas de diversidad que el resto y por tanto evita los óptimos locales. Todos los algoritmos funcionan bien en comparación con el greedy, algunos uncluso se acercan mucho a la mejor solucion, como es el caso de BMB o ILS para wil50.
+
+\end{document}
